@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalii Burse Studenți</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        form, .sorting-links {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .sorting-links a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: blue;
+        }
+        .sorting-links a:hover {
+            text-decoration: underline;
+        }
+        input[type="number"], button {
+            padding: 8px;
+            margin-right: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin-top: 2px;
+            cursor: pointer; /* Allows clicking on the list items */
+        }
+        /* Modal styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* 5% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%; /* Could be more or less, depending on screen size */
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Detalii Burse Studenți</h1>
+<form action="/students/burse" method="get">
+    <label for="minMedia">Minim Media:</label>
+    <input type="number" id="minMedia" name="minMedia" th:value="${minMedia}" step="0.1" min="1" max="10" required>
+    <button type="submit">Filtrează după Media</button>
+</form>
+<div class="sorting-links">
+    <a th:href="@{/students/burse(sortBy='name', minMedia=${minMedia})}">Sort by Name</a>
+    <a th:href="@{/students/burse(sortBy='year', minMedia=${minMedia})}">Sort by Year</a>
+    <a th:href="@{/students/burse(sortBy='medie', minMedia=${minMedia})}">Sort by Medie</a>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Nume</th>
+        <th>Media</th>
+        <th>An</th>
+        <th>Detalii Burse</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${students}">
+        <td th:text="${student.nume}"></td>
+        <td th:text="${student.media}"></td>
+        <td th:text="${student.anulStudiu}"></td>
+        <td>
+            <ul>
+                <li th:each="bursa : ${student.burse}"
+                    th:text="|${bursa.tip} - Suma: ${bursa.sumaAlocata} lei, Stare: ${bursa.state}|"
+                 </li>
+                <li th:if="${student.burse.isEmpty()}"
+                    th:text="'Stare: RESPINSA'"
+                    th:data-name="${student.nume}"
+                    th:data-media="${student.media}"
+                    th:data-venit="${student.venitFamilie}"
+                    th:data-reasons="${student.rejectionReasons}"
+                    onclick="openModal(this.getAttribute('data-name'), this.getAttribute('data-media'), this.getAttribute('data-venit'), this.getAttribute('data-reasons'))">
+                </li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalText">Some text in the Modal..</p>
+    </div>
+</div>
+
+<script>
+function openModal(name, media, venit, reasons) {
+    var modal = document.getElementById('myModal');
+    var modalText = document.getElementById('modalText');
+    var span = document.getElementsByClassName("close")[0];
+
+    // Construct the display text
+    modalText.innerHTML = '<strong>Name:</strong> ' + name + '<br>' +
+                          '<strong>Media:</strong> ' + media + '<br>' +
+                          '<strong>Venit Familial:</strong> ' + venit + '<br>' +
+                          '<strong>Reasons:</strong> ' + reasons;
+
+    // Display the modal in the middle of the page
+    modal.style.display = "block";
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+}
+</script>
+</body>
+</html>

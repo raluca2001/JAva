@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Studenti</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        form, .sorting-links {
+            margin-top: 20px;
+        }
+        .sorting-links a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: blue;
+        }
+        .sorting-links a:hover {
+            text-decoration: underline;
+        }
+        input[type="number"] {
+            margin-right: 10px;
+        }
+        button {
+            cursor: pointer;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<h1>Lista de Studenți</h1>
+<form action="/students" method="get">
+    <label for="minMedia">Minim Media:</label>
+    <input type="number" id="minMedia" name="minMedia" step="0.1" min="1" max="10" required>
+    <button type="submit">Filtrează după Media</button>
+</form>
+
+<div class="sorting-links">
+    <a th:href="@{/students(sortBy='name', minMedia=${minMedia})}">Sort by Name</a>
+    <a th:href="@{/students(sortBy='year', minMedia=${minMedia})}">Sort by Year</a>
+    <a th:href="@{/students(sortBy='medie', minMedia=${minMedia})}">Sort by Medie</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nume</th>
+        <th>Media</th>
+        <th>Participant Competiții</th>
+        <th>Venit Familie</th>
+        <th>Membri Familie</th>
+        <th>Zona Defavorizată</th>
+        <th>Probleme Medicale</th>
+        <th>Deces în Familie</th>
+        <th>Situație Excepțională</th>
+        <th>Anul Studiu</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${students}">
+        <td th:text="${student.nume}">Nume</td>
+        <td th:text="${student.media}">Media</td>
+        <td th:text="${student.participantCompetitii ? 'Da' : 'Nu'}">Competiții</td>
+        <td th:text="${student.venitFamilie}">Venit Familie</td>
+        <td th:text="${student.membriFamilie}">Membri Familie</td>
+        <td th:text="${student.zonaDefavorizata ? 'Da' : 'Nu'}">Zona Defavorizată</td>
+        <td th:text="${student.problemeMedicale ? 'Da' : 'Nu'}">Probleme Medicale</td>
+        <td th:text="${student.decesInFamilie ? 'Da' : 'Nu'}">Deces în Familie</td>
+        <td th:text="${student.situatieExceptionala ? 'Da' : 'Nu'}">Situație Excepțională</td>
+        <td th:text="${student.anulStudiu}">Anul Studiu</td>
+    </tr>
+    </tbody>
+</table>
+
+<form th:action="@{/students/alocare-burse}" method="post">
+    <button type="submit">Alocă Burse</button>
+</form>
+</body>
+</html>
